@@ -1,10 +1,10 @@
 <?php
 
-require_once 'app/init.php';
+require_once '../app/init.php';
 
 //connect to mysql db
 try {
-    $pdo = new PDO("mysql:host=localhost;dbname=pokemon", "root", "MindSpec123");
+    $pdo = new PDO("mysql:host=localhost;dbname=form", "user", "pass");
     // Set the PDO error mode to exception
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 } catch (PDOException $e) {
@@ -62,7 +62,7 @@ try {
 //
 try {
 //insert into mysql table
-    $query = "SELECT * FROM moves";
+    $query = "SELECT * FROM article";
 
     $statement = $pdo->prepare($query);
     $statement->execute();
@@ -71,17 +71,19 @@ try {
 } catch (PDOException $e) {
     die("ERROR: Could not able to execute $query. " . $e->getMessage());
 }
-foreach ($result as $move) {
+foreach ($result as $res) {
 
     $indexed = $es->index([
-        'index' => 'pokemon',
-        'type' => 'moves',
-        'id' => $move['id'],
+        'index' => 'autdb',
+        'type' => 'article',
+        'id' => $res['pmid'],
         'body' => [
-            'name' => $move['name'],
-            'power' => $move['power'],
-            'pp' => $move['pp'],
-            'accuracy' => $move['accuracy']
+            'title' => $res['title'],
+            'author' => $res['author'],
+            'journal' => $res['journal'],
+            'pubdate' => $res['pubdate'],
+            'annotator' => $res['annotator'],
+            'date_added' => $res['date_added']
         ]
     ]);
 

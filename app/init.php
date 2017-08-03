@@ -1,8 +1,6 @@
 <?php
 
-require_once 'vendor/autoload.php';
-
-require 'vendor/autoload.php';
+require '../vendor/autoload.php';
 
 use Elasticsearch\ClientBuilder;
 
