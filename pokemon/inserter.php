@@ -4,7 +4,7 @@ require_once '../app/init.php';
 
 //connect to mysql db
 try {
-    $pdo = new PDO("mysql:host=localhost;dbname=form", "user", "pass");
+    $pdo = new PDO("mysql:host=localhost;dbname=autdb", "root", "MindSpec123");
     // Set the PDO error mode to exception
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 } catch (PDOException $e) {
@@ -62,22 +62,37 @@ try {
 //
 try {
 //insert into mysql table
-    $query = "SELECT * FROM article";
+    $query = "DESCRIBE hg_gene_report";
 
     $statement = $pdo->prepare($query);
     $statement->execute();
-    $result = $statement->fetchAll(PDO::FETCH_ASSOC);
+    $headers = $statement->fetchAll(PDO::FETCH_ASSOC);
     $statement->closeCursor();
+    
+    $query2 = "SELECT * FROM hg_gene_report LIMIT 1";
+
+    $statement2 = $pdo->prepare($query2);
+    $statement2->execute();
+    $result = $statement2->fetchAll(PDO::FETCH_ASSOC);
+    $statement2->closeCursor();
+    print_r($result);
+    
+    foreach($headers as $col) {
+        echo $col['Field'] . "<br>";
+    }
 } catch (PDOException $e) {
     die("ERROR: Could not able to execute $query. " . $e->getMessage());
 }
-foreach ($result as $res) {
-
+foreach ($result as $index => $res) {
+    echo $index;
+    echo $headers[$index]['Field'];
     $indexed = $es->index([
         'index' => 'autdb',
-        'type' => 'article',
-        'id' => $res['pmid'],
+        'type' => 'hg_gene',
         'body' => [
+        foreach($headers as $col) {
+        echo $col['Field'] . "=> $res[$col['Field']]";
+    }
             'title' => $res['title'],
             'author' => $res['author'],
             'journal' => $res['journal'],
