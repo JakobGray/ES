@@ -4,7 +4,7 @@ require_once '../app/init.php';
 
 //connect to mysql db
 try {
-    $pdo = new PDO("mysql:host=localhost;dbname=autdb", "root", "MindSpec123");
+    $pdo = new PDO("mysql:host=localhost;dbname=form", "root", "MindSpec123");
     // Set the PDO error mode to exception
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 } catch (PDOException $e) {
@@ -62,42 +62,54 @@ try {
 //
 try {
 //insert into mysql table
-    $query = "DESCRIBE hg_gene_report";
+    $query = "DESCRIBE model_gene";
 
     $statement = $pdo->prepare($query);
     $statement->execute();
     $headers = $statement->fetchAll(PDO::FETCH_ASSOC);
     $statement->closeCursor();
-    
-    $query2 = "SELECT * FROM hg_gene_report LIMIT 1";
+
+    $query2 = "SELECT * FROM model_gene";
 
     $statement2 = $pdo->prepare($query2);
     $statement2->execute();
     $result = $statement2->fetchAll(PDO::FETCH_ASSOC);
     $statement2->closeCursor();
-    print_r($result);
-    
-    foreach($headers as $col) {
-        echo $col['Field'] . "<br>";
-    }
+//    print_r($result);
+
+//    foreach ($headers as $col) {
+////        echo $col['Field'] . "<br>";
+//        echo "'" . $col['Field'] . "' => " . "\$res['" . $col['Field'] . "']," . "<br>";
+//    }
 } catch (PDOException $e) {
     die("ERROR: Could not able to execute $query. " . $e->getMessage());
 }
 foreach ($result as $index => $res) {
     echo $index;
-    echo $headers[$index]['Field'];
+
     $indexed = $es->index([
         'index' => 'autdb',
-        'type' => 'hg_gene',
+        'type' => 'model_gene',
         'body' => [
-        foreach($headers as $col) {
-        echo $col['Field'] . "=> $res[$col['Field']]";
-    }
-            'title' => $res['title'],
-            'author' => $res['author'],
-            'journal' => $res['journal'],
-            'pubdate' => $res['pubdate'],
-            'annotator' => $res['annotator'],
+            'modelID' => $res['modelID'],
+            'annotatorID' => $res['annotatorID'],
+            'reportID' => $res['reportID'],
+            'model_species' => $res['model_species'],
+            'model_type' => $res['model_type'],
+            'genotype' => $res['genotype'],
+            'construct_def' => $res['construct_def'],
+            'allele_type' => $res['allele_type'],
+            'strain_origin' => $res['strain_origin'],
+            'genetic_background' => $res['genetic_background'],
+            'es_cell_line' => $res['es_cell_line'],
+            'mutant_es_cell_line' => $res['mutant_es_cell_line'],
+            'model_source' => $res['model_source'],
+            'external_id' => $res['external_id'],
+            'agent' => $res['agent'],
+            'parent_model' => $res['parent_model'],
+            'constructs' => $res['constructs'],
+            'experiment_type' => $res['experiment_type'],
+            'temp_targeting' => $res['temp_targeting'],
             'date_added' => $res['date_added']
         ]
     ]);
