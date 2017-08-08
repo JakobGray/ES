@@ -1,14 +1,15 @@
 <?php
 require '../app/init.php';
+include 'autdb_db.php';
 
 if (isset($_GET['q'])) {
     $q = $_GET['q'];
     $f = $_GET['f'];
-//    $t = $_GET['t'];
-    
+    $t = $_GET['t'];
+
     $params = [
         'index' => 'autdb',
-        'type' => 'model_gene',
+        'type' => $t,
         'size' => 50,
         'body' => [
             'query' => [
@@ -20,7 +21,7 @@ if (isset($_GET['q'])) {
             ]
         ]
     ];
-    
+
     $query = $es->search($params);
 //    echo '<pre>' . json_encode($query, JSON_PRETTY_PRINT) . '</pre>';
 
@@ -37,15 +38,34 @@ if (isset($_GET['q'])) {
         <title></title>
     </head>
     <body>
+        <h1>Search AUTDB database</h1>
         <form action="search_func.php" method="get">
-<!--            <label>
-                Table
-                <input type="text" name="t">
-            </label>-->
-            <label>
-                Field
-                <input type="text" name="f">
-            </label>
+            <select name="t">
+                <?php
+                $tables = get_tables();
+                foreach ($tables as $table) {
+                    echo "<option value='" . $table . "'>" . $table . "</option>";
+                }
+                ?>
+            </select>
+
+            <select name="f">
+                <option value="gene_symbol">Gene Symbol</option>
+            </select>
+
+            <form id='pre_ajax' class='ajax' action = '.' method ='POST' accept-charset ='UTF-8' enctype ='multipart/form-data'>
+                <fieldset>
+                    <legend>Enter Article ID</legend>
+                    <!--<input type = 'hidden' name = 'action' value = 'show_article_add'>-->
+
+                    <label for = 'pmid' >PMID*:</label>
+                    <input type = 'number' name = 'pmid' maxlength = '50'>
+
+                    <input type = "submit" value = "Verify"/>
+                </fieldset>
+            </form>
+
+
             <label>
                 Query
                 <input type="text" name="q">
@@ -61,18 +81,13 @@ if (isset($_GET['q'])) {
                 <div class="result">
                     <?php
                     echo 'ID: ' . $r['_id'] . '<br>';
-                    echo 'Symbol: ' . $r['_source']['modelID'] . '<br>';
-                    echo 'Description: ' . $r['_source']['construct_def'] . '<br>';
+                    echo 'Description: ' . $r['_source']["$f"] . '<br>';
                     ?>
                 </div>
                 <br>
-
-
                 <?php
             }
         }
         ?>
-
-
     </body>
 </html>
