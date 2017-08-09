@@ -30,7 +30,7 @@ function get_tables() {
 
 function get_cols() {
     global $pdo;
-    $lists;
+    $lists= array();
     try {
         // Get list of tables
         $query3 = "SHOW TABLES";

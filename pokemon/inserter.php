@@ -1,6 +1,3 @@
-<script>
-    function 
-</script>
 <?php
 
 require_once '../app/init.php';

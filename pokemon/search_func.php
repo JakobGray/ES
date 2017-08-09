@@ -1,3 +1,4 @@
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 <?php
 require '../app/init.php';
 include 'autdb_db.php';
@@ -40,7 +41,8 @@ if (isset($_GET['q'])) {
     <body>
         <h1>Search AUTDB database</h1>
         <form action="search_func.php" method="get">
-            <select name="t">
+            <select name="t" id="table">
+                <option disabled selected value> -- select an option -- </option>
                 <?php
                 $tables = get_tables();
                 foreach ($tables as $table) {
@@ -48,23 +50,10 @@ if (isset($_GET['q'])) {
                 }
                 ?>
             </select>
-
-            <select name="f">
-                <option value="gene_symbol">Gene Symbol</option>
+            
+            <select name="f" id="field">
+  
             </select>
-
-            <form id='pre_ajax' class='ajax' action = '.' method ='POST' accept-charset ='UTF-8' enctype ='multipart/form-data'>
-                <fieldset>
-                    <legend>Enter Article ID</legend>
-                    <!--<input type = 'hidden' name = 'action' value = 'show_article_add'>-->
-
-                    <label for = 'pmid' >PMID*:</label>
-                    <input type = 'number' name = 'pmid' maxlength = '50'>
-
-                    <input type = "submit" value = "Verify"/>
-                </fieldset>
-            </form>
-
 
             <label>
                 Query
@@ -89,5 +78,24 @@ if (isset($_GET['q'])) {
             }
         }
         ?>
+
     </body>
 </html>
+<script>
+    $('#table').change(function () {
+        var id = $(this).val(); //get the current value's option
+        $.ajax({
+            type: 'POST',
+            url: 'change_select.php',
+            data: {'id': id},
+            success: function (data) {
+                //in here, for simplicity, you can substitue the HTML for a brand new select box for countries
+                //1.
+                $("#field").html(data);
+
+                //2.
+                // iterate through objects and build HTML here
+            }
+        });
+    });
+</script>
